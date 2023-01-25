@@ -2,8 +2,15 @@ package org.example;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class Bot extends TelegramLongPollingBot {
     private final static String botUserName = "EterGotibot";
@@ -23,18 +30,46 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         Long chatId = getChatId(update);
-        SendMessage message;
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+
         if (!courtesy) {
-            message = createMessage("*Hello!*", chatId);
-            sendApiMethodAsync(message);
+            message = createMessage(chatId, "*Привіт!*\nНаберіть /start для початку");
             courtesy = true;
         }
-        message = mockingbird(update.getMessage(), chatId);
+        if (update.hasMessage() && update.getMessage().getText().equals("/start")) {
+            message.setText(fixEncoding("Над полониною лунає:"));
+            attachButtons(message, Map.of(
+                    "Слава Україні!", "but_1"
+            ));
+        }
+
+        if (update.hasCallbackQuery()) {
+            String callBack = update.getCallbackQuery().getData();
+            if (callBack.equals("but_1")) {
+                message = createMessage(chatId, "Героям Слава!");
+                attachButtons(message, Map.of(
+                        "Слава Нації", "but_2"
+                ));
+            }
+            if (callBack.equals("but_2")) {
+                message = createMessage(chatId, "Смерть ворогам!");
+            }
+        }
         sendApiMethodAsync(message);
     }
 
-    public SendMessage mockingbird(Message answer, Long chatId) {
-         return createMessage("*Your text is:* " + answer.getText(), chatId);
+    public void attachButtons(SendMessage message, Map<String, String> buttons) {
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        for (String buttonName : buttons.keySet()) {
+            InlineKeyboardButton button = new InlineKeyboardButton();
+            button.setText(fixEncoding(buttonName));
+            button.setCallbackData(buttons.get(buttonName));
+            keyboard.add(Arrays.asList(button));
+        }
+        markup.setKeyboard(keyboard);
+        message.setReplyMarkup(markup);
     }
 
     public Long getChatId(Update update) {
@@ -48,11 +83,15 @@ public class Bot extends TelegramLongPollingBot {
         return null;
     }
 
-    public SendMessage createMessage(String str, Long chatId) {
+    public SendMessage createMessage(Long chatId, String text) {
         SendMessage message = new SendMessage();
-        message.setText(str);
+        message.setText(fixEncoding(text));
         message.setParseMode("markdown");
         message.setChatId(chatId);
         return message;
+    }
+
+    private String fixEncoding(String text) {
+        return new String(text.getBytes(), StandardCharsets.UTF_8);
     }
 }
