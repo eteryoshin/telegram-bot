@@ -1,5 +1,6 @@
 package org.example;
 
+import com.vdurmont.emoji.EmojiParser;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -8,11 +9,12 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class Bot extends TelegramLongPollingBot {
+    private final String smile_emoji = EmojiParser.parseToUnicode(":slight_smile:");
+    private final String man_shrugging = "\uD83E\uDD37\u200D\u2642\uFE0F";
     private final static String botUserName = "EterGotibot";
     private final static String botApiToken = "5917018861:AAG1Ad-9hUJB2qMAaYPq-PpIIOTvfcfAMFg";
     private boolean courtesy;
@@ -34,26 +36,36 @@ public class Bot extends TelegramLongPollingBot {
         message.setChatId(chatId);
 
         if (!courtesy) {
-            message = createMessage(chatId, "*Привіт!*\nНаберіть /start для початку");
+            message.setText(fixEncoding("*Привіт! *") + smile_emoji + fixEncoding("\nНатисніть /start для початку"));
+            message.setParseMode("markdown");
+            sendApiMethodAsync(message);
             courtesy = true;
+            return;
         }
-        if (update.hasMessage() && update.getMessage().getText().equals("/start")) {
-            message.setText(fixEncoding("Над полониною лунає:"));
-            attachButtons(message, Map.of(
-                    "Слава Україні!", "but_1"
-            ));
+
+        if (update.hasMessage()) {
+            switch (update.getMessage().getText()) {
+                case ("/start"):
+                    message.setText(fixEncoding("Над полониною лунає:"));
+                    attachButtons(message, Map.of(
+                            "Слава Україні!", "but_1"
+                    ));
+                    break;
+                default:
+                    message.setText(fixEncoding("Наразі я розумію тільки команду /start ") + man_shrugging);
+            }
         }
 
         if (update.hasCallbackQuery()) {
-            String callBack = update.getCallbackQuery().getData();
-            if (callBack.equals("but_1")) {
-                message = createMessage(chatId, "Героям Слава!");
-                attachButtons(message, Map.of(
-                        "Слава Нації", "but_2"
-                ));
-            }
-            if (callBack.equals("but_2")) {
-                message = createMessage(chatId, "Смерть ворогам!");
+            switch (update.getCallbackQuery().getData()) {
+                case "but_1":
+                    message = createMessage(chatId, "Героям Слава!");
+                    attachButtons(message, Map.of(
+                            "Слава Нації", "but_2"
+                    ));
+                    break;
+                case "but_2":
+                    message = createMessage(chatId, "Смерть ворогам!");
             }
         }
         sendApiMethodAsync(message);
@@ -66,7 +78,7 @@ public class Bot extends TelegramLongPollingBot {
             InlineKeyboardButton button = new InlineKeyboardButton();
             button.setText(fixEncoding(buttonName));
             button.setCallbackData(buttons.get(buttonName));
-            keyboard.add(Arrays.asList(button));
+            keyboard.add(List.of(button));
         }
         markup.setKeyboard(keyboard);
         message.setReplyMarkup(markup);
