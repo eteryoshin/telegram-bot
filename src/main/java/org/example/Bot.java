@@ -17,12 +17,13 @@ import java.util.List;
 import java.util.Map;
 
 import static org.example.BotEmoji.*;
-
 public class Bot extends TelegramLongPollingBot {
-    private final static String botUserName = "EterGotibot";
-    private final static String botApiToken = "5917018861:AAG1Ad-9hUJB2qMAaYPq-PpIIOTvfcfAMFg";
-    private final Text messagesTexts = new Text("content/texts/");
-    private final Buttons buttonsTexts = new Buttons("content/buttons/");
+    private final static BotConfig config = new BotConfig();
+    private final static String botUserName = config.getBotUserName();
+    private final static String botApiToken = config.getBotApiToken();
+    private final Text messagesTexts = new Text(config.getMessagesTexts());
+    private final Buttons buttonsTexts = new Buttons(config.getButtonsTexts());
+    private final String imagesPath = new String(config.getImagesPath());
     private final Map<Long, Integer> levels = new HashMap<>();
     private boolean courtesy;
 
@@ -54,15 +55,13 @@ public class Bot extends TelegramLongPollingBot {
         }
 
         if (update.hasMessage()) {
-            switch (update.getMessage().getText()) {
-                case ("/start"):
-                    setLevels(chatId, 1);
-                    sendImage(chatId, "level-1");
-                    message.setText(messagesTexts.getData().get("level-1.txt"));
-                    attachButtons(message, buttonsTexts.getButtons("level-1.but", getLevel(chatId)));
-                    break;
-                default:
-                    message.setText(fixEncoding("Наразі я розумію тільки команду /start ") + MAN_SHRUGGING.getEmoji());
+            if ("/start".equals(update.getMessage().getText())) {
+                setLevels(chatId, 1);
+                sendImage(chatId, "level-1.gif");
+                message.setText(messagesTexts.getData().get("level-1.txt"));
+                attachButtons(message, buttonsTexts.getButtons("level-1.but", getLevel(chatId)));
+            } else {
+                message.setText(fixEncoding("Наразі я розумію тільки команду /start ") + MAN_SHRUGGING.getEmoji());
             }
         }
 
@@ -72,7 +71,7 @@ public class Bot extends TelegramLongPollingBot {
             }
             if (getLevel(chatId) >= 0) {
                 setLevels(chatId, getLevel(chatId) + 1);
-                sendImage(chatId, "level-" + getLevel(chatId));
+                sendImage(chatId, "level-" + getLevel(chatId) + ".gif");
                 message.setText(messagesTexts.getData().get("level-" + getLevel(chatId) + ".txt"));
                 attachButtons(message, buttonsTexts.getButtons("level-" + getLevel(chatId) + ".but", getLevel(chatId)));
             } else {
@@ -119,7 +118,7 @@ public class Bot extends TelegramLongPollingBot {
     public void sendImage(Long chatId, String name) {
         SendAnimation animation = new SendAnimation();
         InputFile inputFile = new InputFile();
-        inputFile.setMedia(new File("content/images/" + name + ".gif"));
+        inputFile.setMedia(new File(imagesPath + name));
         animation.setAnimation(inputFile);
         animation.setChatId(chatId);
         executeAsync(animation);

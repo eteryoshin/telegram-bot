@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e5e0be90-9810-4bdd-8ba3-ed53c8a66a9f" name="Changes" comment="Levels, media and random variants are added">
+    <list default="true" id="e5e0be90-9810-4bdd-8ba3-ed53c8a66a9f" name="Changes" comment="Swirch removed">
+      <change afterPath="$PROJECT_DIR$/application.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/BotConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/content/buttons/final.but" beforeDir="false" afterPath="$PROJECT_DIR$/content/buttons/level-5.but" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/content/images/final.gif" beforeDir="false" afterPath="$PROJECT_DIR$/content/images/level-5.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/content/texts/final.txt" beforeDir="false" afterPath="$PROJECT_DIR$/content/texts/level-5.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Bot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Bot.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -155,7 +155,7 @@
       <option name="presentableId" value="Default" />
       <updated>1674507633391</updated>
       <workItem from="1674507635607" duration="45127000" />
-      <workItem from="1674814023254" duration="5255000" />
+      <workItem from="1674814023254" duration="8513000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <created>1674553226059</created>
@@ -192,7 +192,14 @@
       <option name="project" value="LOCAL" />
       <updated>1674818844846</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Swirch removed">
+      <created>1674820156761</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1674820156761</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -214,6 +221,14 @@
     <MESSAGE value="Buttons added" />
     <MESSAGE value="switch and emoji added" />
     <MESSAGE value="Levels, media and random variants are added" />
-    <option name="LAST_COMMIT_MESSAGE" value="Levels, media and random variants are added" />
+    <MESSAGE value="Swirch removed" />
+    <option name="LAST_COMMIT_MESSAGE" value="Swirch removed" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="GradleRunConfiguration">
+        <watch expression="config.getMessagesTexts()" language="JAVA" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>
