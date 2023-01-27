@@ -56,6 +56,7 @@ public class Bot extends TelegramLongPollingBot {
         if (update.hasMessage()) {
             switch (update.getMessage().getText()) {
                 case ("/start"):
+                    setLevels(chatId, 1);
                     sendImage(chatId, "level-1");
                     message.setText(messagesTexts.getData().get("level-1.txt"));
                     attachButtons(message, buttonsTexts.getButtons("level-1.but", getLevel(chatId)));
@@ -66,49 +67,16 @@ public class Bot extends TelegramLongPollingBot {
         }
 
         if (update.hasCallbackQuery()) {
-            switch (update.getCallbackQuery().getData()) {
-                case "but_0":
-                    if (getLevel(chatId) == 0) {
-                        setLevels(chatId, 1);
-                        sendImage(chatId, "level-1");
-                        message.setText(messagesTexts.getData().get("level-1.txt"));
-                        attachButtons(message, buttonsTexts.getButtons("level-1.but", getLevel(chatId)));
-                    }
-                    break;
-                case "but_1":
-                    if (getLevel(chatId) == 1) {
-                        setLevels(chatId, 2);
-                        sendImage(chatId, "level-2");
-                        message.setText(messagesTexts.getData().get("level-2.txt"));
-                        attachButtons(message, buttonsTexts.getButtons("level-2.but", getLevel(chatId)));
-                    }
-                    break;
-                case "but_2":
-                    if (getLevel(chatId) == 2) {
-                        setLevels(chatId, 3);
-                        sendImage(chatId, "level-3");
-                        message.setText(messagesTexts.getData().get("level-3.txt"));
-                        attachButtons(message, buttonsTexts.getButtons("level-3.but", getLevel(chatId)));
-                    }
-                    break;
-                case "but_3":
-                    if (getLevel(chatId) == 3) {
-                        setLevels(chatId, 4);
-                        sendImage(chatId, "level-4");
-                        message.setText(messagesTexts.getData().get("level-4.txt"));
-                        attachButtons(message, buttonsTexts.getButtons("level-4.but", getLevel(chatId)));
-                    }
-                    break;
-                case "but_4":
-                    if (getLevel(chatId) == 4) {
-                        setLevels(chatId, 0);
-                        sendImage(chatId, "final");
-                        message.setText(messagesTexts.getData().get("final.txt"));
-                        attachButtons(message, buttonsTexts.getButtons("final.but", 0));
-                    }
-                    break;
-                default:
-                    message.setText(fixEncoding("Щось пішло не так ") + FACE_PALM.getEmoji() + fixEncoding(" спробуйте з початку") + "\n/start");
+            if (getLevel(chatId) == 5){
+                setLevels(chatId, 0);
+            }
+            if (getLevel(chatId) >= 0) {
+                setLevels(chatId, getLevel(chatId) + 1);
+                sendImage(chatId, "level-" + getLevel(chatId));
+                message.setText(messagesTexts.getData().get("level-" + getLevel(chatId) + ".txt"));
+                attachButtons(message, buttonsTexts.getButtons("level-" + getLevel(chatId) + ".but", getLevel(chatId)));
+            } else {
+                message.setText(fixEncoding("Щось пішло не так ") + FACE_PALM.getEmoji() + fixEncoding(" спробуйте з початку") + "\n/start");
             }
         }
         message.setParseMode("markdown");
@@ -158,7 +126,7 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     public Integer getLevel(Long chatId) {
-        return levels.getOrDefault(chatId, 1);
+        return levels.getOrDefault(chatId, 0);
     }
 
     public void setLevels(Long chatId, Integer level) {
